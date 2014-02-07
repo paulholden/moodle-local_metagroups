@@ -20,12 +20,42 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_metagroups;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_metagroups';
-$plugin->release   = '0.1';
-$plugin->version   = 2014020701;
-$plugin->requires  = 2013111800; // Moodle 2.6 onwards.
-$plugin->maturity  = MATURITY_BETA;
+class observers {
 
-$plugin->dependencies = array('enrol_meta' => 2013110500);
+    /**
+     * Group created
+     *
+     * @param \core\event\group_created $event
+     * @return void
+     */
+    public static function group_created(\core\event\group_created $event) {
+        $group = $event->get_record_snapshot('groups', $event->objectid);
+
+    }
+
+    /**
+     * Group updated
+     *
+     * @param \core\event\group_updated $event
+     * @return void
+     */
+    public static function group_updated(\core\event\group_updated $event) {
+        $group = $event->get_record_snapshot('groups', $event->objectid);
+
+    }
+
+    /**
+     * Group deleted
+     *
+     * @param \core\event\group_deleted $event
+     * @return void
+     */
+    public static function group_deleted(\core\event\group_deleted $event) {
+        $group = $event->get_record_snapshot('groups', $event->objectid);
+
+    }
+}

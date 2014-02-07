@@ -22,10 +22,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_metagroups';
-$plugin->release   = '0.1';
-$plugin->version   = 2014020701;
-$plugin->requires  = 2013111800; // Moodle 2.6 onwards.
-$plugin->maturity  = MATURITY_BETA;
+$observers = array(
+    array(
+        'eventname' => '\core\event\group_created',
+        'callback'  => '\local_metagroups\observers::group_created',
+    ),
 
-$plugin->dependencies = array('enrol_meta' => 2013110500);
+    array(
+        'eventname' => '\core\event\group_updated',
+        'callback'  => '\local_metagroups\observers::group_updated',
+    ),
+
+    array(
+        'eventname' => '\core\event\group_deleted',
+        'callback'  => '\local_metagroups\observers::group_deleted',
+    ),
+);
