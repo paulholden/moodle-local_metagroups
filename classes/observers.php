@@ -24,6 +24,8 @@ namespace local_metagroups;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/local/metagroups/locallib.php');
+
 class observers {
 
     /**
@@ -33,8 +35,23 @@ class observers {
      * @return void
      */
     public static function group_created(\core\event\group_created $event) {
+        global $DB;
+
         $group = $event->get_record_snapshot('groups', $event->objectid);
 
+        $courseids = local_metagroups_parent_courses($group->courseid);
+        foreach ($courseids as $courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+            if (! $DB->record_exists('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+                $metagroup = new \stdClass();
+                $metagroup->courseid = $course->id;
+                $metagroup->idnumber = $group->id;
+                $metagroup->name = $group->name;
+
+                groups_create_group($metagroup, false, false);
+            }
+        }
     }
 
     /**
@@ -44,8 +61,20 @@ class observers {
      * @return void
      */
     public static function group_updated(\core\event\group_updated $event) {
+        global $DB;
+
         $group = $event->get_record_snapshot('groups', $event->objectid);
 
+        $courseids = local_metagroups_parent_courses($group->courseid);
+        foreach ($courseids as $courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+            if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+                $metagroup->name = $group->name;
+
+                groups_update_group($metagroup, false, false);
+            }
+        }
     }
 
     /**
@@ -55,7 +84,17 @@ class observers {
      * @return void
      */
     public static function group_deleted(\core\event\group_deleted $event) {
+        global $DB;
+
         $group = $event->get_record_snapshot('groups', $event->objectid);
 
+        $courseids = local_metagroups_parent_courses($group->courseid);
+        foreach ($courseids as $courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+            if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+                groups_delete_group($metagroup);
+            }
+        }
     }
 }
