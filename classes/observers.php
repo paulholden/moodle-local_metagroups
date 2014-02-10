@@ -97,4 +97,48 @@ class observers {
             }
         }
     }
+
+    /**
+     * Group member added
+     *
+     * @param \core\event\group_member_added $event
+     * @return void
+     */
+    public static function group_member_added(\core\event\group_member_added $event) {
+        global $DB;
+
+        $group = $event->get_record_snapshot('groups', $event->objectid);
+        $userid = $event->relateduserid;
+
+        $courseids = local_metagroups_parent_courses($group->courseid);
+        foreach ($courseids as $courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+            if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+                groups_add_member($metagroup, $userid, null, 0);
+            }
+        }
+    }
+
+    /**
+     * Group member removed
+     *
+     * @param \core\event\group_member_removed $event
+     * @return void
+     */
+    public static function group_member_removed(\core\event\group_member_removed $event) {
+        global $DB;
+
+        $group = $event->get_record_snapshot('groups', $event->objectid);
+        $userid = $event->relateduserid;
+
+        $courseids = local_metagroups_parent_courses($group->courseid);
+        foreach ($courseids as $courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+            if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+                groups_remove_member($metagroup, $userid);
+            }
+        }
+    }
 }

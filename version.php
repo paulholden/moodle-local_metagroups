@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_metagroups';
 $plugin->release   = '0.1';
-$plugin->version   = 2014020701;
+$plugin->version   = 2014021000;
 $plugin->requires  = 2013111800; // Moodle 2.6 onwards.
 $plugin->maturity  = MATURITY_BETA;
 

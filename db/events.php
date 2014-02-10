@@ -37,4 +37,14 @@ $observers = array(
         'eventname' => '\core\event\group_deleted',
         'callback'  => '\local_metagroups\observers::group_deleted',
     ),
+
+    array(
+        'eventname' => '\core\event\group_member_added',
+        'callback'  => '\local_metagroups\observers::group_member_added',
+    ),
+
+    array(
+        'eventname' => '\core\event\group_member_removed',
+        'callback'  => '\local_metagroups\observers::group_member_removed',
+    ),
 );
