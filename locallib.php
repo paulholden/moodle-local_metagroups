@@ -22,14 +22,74 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/group/lib.php');
+
 /**
  * Get a list of parent courses for a given course ID
  *
- * @param int $courseid
- * @return array of parent course IDs
+ * @param int|null $courseid or null for all parents
+ * @return array of course IDs
  */
-function local_metagroups_parent_courses($courseid) {
+function local_metagroups_parent_courses($courseid = null) {
     global $DB;
 
-    return $DB->get_records_menu('enrol', array('enrol' => 'meta', 'customint1' => $courseid, 'status' => ENROL_INSTANCE_ENABLED), 'sortorder', 'id, courseid');
+    $conditions = array('enrol' => 'meta', 'status' => ENROL_INSTANCE_ENABLED);
+    if ($courseid !== null) {
+        $conditions['customint1'] = $courseid;
+    }
+
+    return $DB->get_records_menu('enrol', $conditions, 'sortorder', 'id, courseid');
+}
+
+/**
+ * Get a list of all child courses for a given course ID
+ *
+ * @param int $courseid
+ * @return array of course IDs
+ */
+function local_metagroups_child_courses($courseid) {
+    global $DB;
+
+    return $DB->get_records_menu('enrol', array('enrol' => 'meta', 'courseid' => $courseid, 'status' => ENROL_INSTANCE_ENABLED), 'sortorder', 'id, customint1');
+}
+
+/**
+ * Run synchronization process
+ *
+ * @param progress_trace $trace
+ * @return void
+ */
+function local_metagroups_sync(progress_trace $trace) {
+    global $DB;
+
+    $courseids = local_metagroups_parent_courses();
+    foreach (array_unique($courseids) as $courseid) {
+        $parent = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        $trace->output($parent->fullname, 1);
+
+        $children = local_metagroups_child_courses($parent->id);
+        foreach ($children as $childid) {
+            $child = $DB->get_record('course', array('id' => $childid), '*', MUST_EXIST);
+            $trace->output($child->fullname, 2);
+
+            $groups = groups_get_all_groups($child->id);
+            foreach ($groups as $group) {
+                if (! $metagroup = $DB->get_record('groups', array('courseid' => $parent->id, 'idnumber' => $group->id))) {
+                    $metagroup = new stdClass();
+                    $metagroup->courseid = $parent->id;
+                    $metagroup->idnumber = $group->id;
+                    $metagroup->name = $group->name;
+
+                    $metagroup->id = groups_create_group($metagroup, false, false);
+                }
+
+                $trace->output($metagroup->name, 3);
+
+                $users = groups_get_members($group->id);
+                foreach ($users as $user) {
+                    groups_add_member($metagroup, $user->id, null, 0);
+                }
+            }
+        }
+    }
 }
