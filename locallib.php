@@ -87,7 +87,7 @@ function local_metagroups_sync(progress_trace $trace) {
 
                 $users = groups_get_members($group->id);
                 foreach ($users as $user) {
-                    groups_add_member($metagroup, $user->id, null, 0);
+                    groups_add_member($metagroup, $user->id, 'local_metagroups', $group->id);
                 }
             }
         }

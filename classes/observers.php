@@ -115,7 +115,7 @@ class observers {
             $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
             if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
-                groups_add_member($metagroup, $userid, null, 0);
+                groups_add_member($metagroup, $userid, 'local_metagroups', $group->id);
             }
         }
     }

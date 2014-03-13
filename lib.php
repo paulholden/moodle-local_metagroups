@@ -22,10 +22,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_metagroups';
-$plugin->release   = '1.1';
-$plugin->version   = 2014031300;
-$plugin->requires  = 2013111800; // Moodle 2.6 onwards.
-$plugin->maturity  = MATURITY_STABLE;
-
-$plugin->dependencies = array('enrol_meta' => 2013110500);
+/**
+ * Called whenever anybody tries (from the normal interface) to remove a group
+ * member which is registered as being created by this component.
+ *
+ * @param int $itemid
+ * @param int $groupid
+ * @param int $userid
+ * @return bool
+ */
+function local_metagroups_allow_group_member_remove($itemid, $groupid, $userid) {
+    return false;
+}
