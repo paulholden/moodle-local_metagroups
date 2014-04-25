@@ -54,6 +54,42 @@ function local_metagroups_child_courses($courseid) {
 }
 
 /**
+ * Returns the groups in the specified grouping.
+ *
+ * @param int $groupingid The groupingid to get the groups for
+ * @param string $fields The fields to return
+ * @param string $sort optional sorting of returned users
+ * @return array|bool Returns an array of the groups for the specified
+ * group or false if no groups or an error returned.
+ */
+function local_metagroups_get_grouping_groups($groupingid, $fields='g.*', $sort='name ASC') {
+    global $DB;
+
+	return $DB->get_records_sql("SELECT $fields
+                                   FROM {groups} g, {groupings_groups} gg
+                                  WHERE g.id = gg.groupid AND gg.groupingid = ?
+                               ORDER BY $sort", array($groupingid));
+}
+
+/**
+ * Returns the group id of a group in a parent course matching the child course.
+ *
+ * @param int $groupid The groupid to get the group for
+ * @param int $courseid The course "parent" id
+ * @return array|bool Returns an array of the id for the specified
+ * course or false if no group or an error returned.
+ */
+function local_metagroups_group_match($groupid, $courseid) {
+    global $DB;
+	
+	return $DB->get_records_sql("SELECT g.id
+                                   FROM {groups} g
+                                  WHERE g.idnumber = $groupid AND g.courseid=$courseid");
+}
+
+
+
+/**
  * Run synchronization process
  *
  * @param progress_trace $trace
@@ -62,18 +98,18 @@ function local_metagroups_child_courses($courseid) {
 function local_metagroups_sync(progress_trace $trace) {
     global $DB;
 
-    $courseids = local_metagroups_parent_courses();
-    foreach (array_unique($courseids) as $courseid) {
+    $courseids = local_metagroups_parent_courses(); // Get of all parent courses in the platform
+    foreach (array_unique($courseids) as $courseid) { // browse parent courses ID
         $parent = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
         $trace->output($parent->fullname, 1);
 
-        $children = local_metagroups_child_courses($parent->id);
-        foreach ($children as $childid) {
+        $children = local_metagroups_child_courses($parent->id); // Get of all child courses ID for current parretn course
+        foreach ($children as $childid) { // browse child courses ID
             $child = $DB->get_record('course', array('id' => $childid), '*', MUST_EXIST);
             $trace->output($child->fullname, 2);
 
-            $groups = groups_get_all_groups($child->id);
-            foreach ($groups as $group) {
+            $childgroups = groups_get_all_groups($child->id); // Get child course groups
+            foreach ($childgroups as $group) { // Browse child group course and create in parent course if necessary
                 if (! $metagroup = $DB->get_record('groups', array('courseid' => $parent->id, 'idnumber' => $group->id))) {
                     $metagroup = new stdClass();
                     $metagroup->courseid = $parent->id;
@@ -85,11 +121,43 @@ function local_metagroups_sync(progress_trace $trace) {
 
                 $trace->output($metagroup->name, 3);
 
-                $users = groups_get_members($group->id);
-                foreach ($users as $user) {
+                $users = groups_get_members($group->id); // Get members from child course group
+                foreach ($users as $user) { // Browse for adding in parent course group
                     groups_add_member($metagroup, $user->id, 'local_metagroups', $group->id);
                 }
             }
+			
+			$parentgroups = groups_get_all_groups($parent->id); // Get members from parent course groups
+			$groupings = groups_get_all_groupings($child->id); // Get groupings from child course
+			
+            foreach ($groupings as $grouping) { // Browse child course groupings and create in parent course if necessary
+				if (! $metagrouping = $DB->get_record('groupings', array('courseid' => $parent->id, 'name' => $grouping->name))) {
+                    $metagrouping = new stdClass();
+                    $metagrouping->courseid = $parent->id;
+                    $metagrouping->idnumber = $grouping->id;
+                    $metagrouping->name = $grouping->name;
+                    $metagrouping->id = groups_create_grouping($metagrouping);
+                }
+
+                $trace->output($metagrouping->name, 3);
+				
+				$groupinggroupsChild = local_metagroups_get_grouping_groups($grouping->id); // Get groups of current grouping (child course)
+				$groupinggroupsParent = local_metagroups_get_grouping_groups($metagrouping->id); // Get groups of current grouping (parent course)
+
+				foreach ($groupinggroupsChild as $groupinggroup) {
+					$targetgroupsid=local_metagroups_group_match($groupinggroup->id,$parent->id); // Should be one group
+					foreach ($targetgroupsid as $targetgroupid) {
+						groups_assign_grouping($metagrouping->id, $targetgroupid->id);
+						unset($groupinggroupsParent[$targetgroupid->id]); // Unset from group for unassign afterward
+					}
+                }
+				
+				foreach ($groupinggroupsParent as $groupinggroup) { // Unassign in parent course 
+					groups_unassign_grouping($metagrouping->id, $groupinggroup->id);
+                }
+				
+            }
+			
         }
     }
 }

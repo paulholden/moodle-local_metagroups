@@ -27,7 +27,86 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 
 class observers {
+    /**
+     * grouping created
+     *
+     * @param \core\event\grouping_created $event
+     * @return void
+     */
+    public static function grouping_created(\core\event\grouping_created $event) {
+        global $DB;
+		
+        $grouping = $event->get_record_snapshot('groupings', $event->objectid);
 
+        $courseids = local_metagroups_parent_courses($grouping->courseid);
+        foreach ($courseids as $courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+			if (! $DB->record_exists('groupings', array('courseid' => $course->id, 'name' => $grouping->name))) {
+                $metagrouping = new \stdClass();
+                $metagrouping->courseid = $course->id;
+                $metagrouping->idnumber = $grouping->id;
+                $metagrouping->name = $grouping->name;
+
+                groups_create_grouping($metagrouping);
+            }
+        }
+    }
+	
+    /**
+     * grouping deleted
+     *
+     * @param \core\event\grouping_deleted $event
+     * @return void
+     */
+    public static function grouping_deleted(\core\event\grouping_deleted $event) {
+        global $DB;
+		
+        $grouping = $event->get_record_snapshot('groupings', $event->objectid);
+
+		$courseids = local_metagroups_parent_courses($grouping->courseid);
+		
+        foreach ($courseids as $courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+            if ($metagrouping = $DB->get_record('groupings', array('courseid' => $course->id, 'name' => $grouping->name))) {
+                groups_delete_grouping($metagrouping);
+            }
+        }
+    }
+
+    /**
+     * Grouping updated
+     *
+     * @param \core\event\grouping_updated $event
+     * @return void
+     */
+    public static function grouping_updated(\core\event\grouping_updated $event) {
+        global $DB;
+		
+        $grouping = $event->get_record_snapshot('groupings', $event->objectid);
+
+        $courseids = local_metagroups_parent_courses($grouping->courseid);
+        foreach ($courseids as $courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+			// Update if the grouping was created with autocreation method
+            if ($metagrouping = $DB->get_record('groupings', array('courseid' => $course->id, 'idnumber' => $grouping->id))) {
+                $metagrouping->name = $grouping->name;
+                groups_update_grouping($metagrouping);
+            }
+			// Update if the grouping was created with meta method
+			else {
+				if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $grouping->id))) {
+					if ($metagrouping = $DB->get_record('groupings', array('courseid' => $course->id, 'idnumber' => $metagroup->id))) {
+						    $metagrouping->name = $grouping->name;
+							groups_update_grouping($metagrouping);
+					}
+				}
+			}
+        }
+    }	
+	
     /**
      * Group created
      *
@@ -38,7 +117,8 @@ class observers {
         global $DB;
 
         $group = $event->get_record_snapshot('groups', $event->objectid);
-
+		
+		//Réplication on parent courses
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
             $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
@@ -52,6 +132,21 @@ class observers {
                 groups_create_group($metagroup, false, false);
             }
         }
+		
+		// Grouping creation if necessary
+		
+		if (! $DB->record_exists('groupings', array('courseid' => $group->courseid, 'idnumber' => $group->id))) {
+
+			$autogrouping = new \stdClass();
+			$autogrouping->courseid = $group->courseid;
+			$autogrouping->idnumber = $group->id;
+			$autogrouping->name = $group->name;
+
+			groups_create_grouping($autogrouping);
+		}
+		
+		//Assign group to grouping
+		groups_assign_grouping($autogrouping->id,$group->id);
     }
 
     /**
@@ -75,6 +170,12 @@ class observers {
                 groups_update_group($metagroup, false, false);
             }
         }
+		
+		if ($metagrouping = $DB->get_record('groupings', array('courseid' => $group->courseid, 'idnumber' => $group->id))) {
+			$metagrouping->name = $group->name;
+
+			groups_update_grouping($metagrouping);
+		}
     }
 
     /**
@@ -87,7 +188,7 @@ class observers {
         global $DB;
 
         $group = $event->get_record_snapshot('groups', $event->objectid);
-
+	
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
             $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
@@ -96,6 +197,10 @@ class observers {
                 groups_delete_group($metagroup);
             }
         }
+		
+		if ($metagrouping = $DB->get_record('groupings', array('courseid' => $group->courseid, 'idnumber' => $group->id))) {
+			groups_delete_grouping($metagrouping);
+		}
     }
 
     /**

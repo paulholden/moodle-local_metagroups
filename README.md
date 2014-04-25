@@ -19,13 +19,17 @@ Any future amendments to groups in 'child' courses will be reflected in linked m
 
 Author
 ------
-Paul Holden (pholden@greenhead.ac.uk)
+Paul Holden (pholden@greenhead.ac.uk) Extended by François Lumineau
 
 - Updates: https://moodle.org/plugins/view.php?plugin=local_metagroups
 - Latest code: https://github.com/paulholden/moodle-local_metagroups
 
 Changes
 -------
+Release 1.2 (build 2014042500)
+- Autocreation of groupings when creating a group and asign the group in the grouping.
+- Synchronization of groupings on meta courses
+
 Release 1.1 (build 2014031300)
 - Prevent synchronized group memberships being removed.
 
