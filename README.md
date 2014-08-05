@@ -15,7 +15,7 @@ Usage
 After installation you may need to synchronize existing meta-course groups, to do this run the cli/sync.php script (use the --help
 switch for further instructions on script usage).
 
-Any future amendments to groups in 'child' courses will be reflected in linked meta-courses.
+Any future amendments to groups in 'child' courses will be reflected in 'parent' courses that use groups.
 
 Author
 ------
@@ -26,6 +26,9 @@ Paul Holden (pholden@greenhead.ac.uk)
 
 Changes
 -------
+Release 1.2 (build 2014080500)
+- Only synchronize parent courses that use groups.
+
 Release 1.1 (build 2014031300)
 - Prevent synchronized group memberships being removed.
 

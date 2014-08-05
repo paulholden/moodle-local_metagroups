@@ -43,6 +43,11 @@ class observers {
         foreach ($courseids as $courseid) {
             $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
+            // If parent course doesn't use groups, we can skip synchronization.
+            if (groups_get_course_groupmode($course) == NOGROUPS) {
+                continue;
+            }
+
             if (! $DB->record_exists('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
                 $metagroup = new \stdClass();
                 $metagroup->courseid = $course->id;

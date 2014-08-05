@@ -22,6 +22,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/grouplib.php');
 require_once($CFG->dirroot . '/group/lib.php');
 
 /**
