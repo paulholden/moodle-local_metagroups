@@ -67,6 +67,11 @@ function local_metagroups_sync(progress_trace $trace) {
         $parent = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
         $trace->output($parent->fullname, 1);
 
+        // If parent course doesn't use groups, we can skip synchronization.
+        if (groups_get_course_groupmode($parent) == NOGROUPS) {
+            continue;
+        }
+
         $children = local_metagroups_child_courses($parent->id);
         foreach ($children as $childid) {
             $child = $DB->get_record('course', array('id' => $childid), '*', MUST_EXIST);
