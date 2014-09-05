@@ -41,7 +41,7 @@ class observers {
 
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+            $course = get_course($courseid);
 
             // If parent course doesn't use groups, we can skip synchronization.
             if (groups_get_course_groupmode($course) == NOGROUPS) {
@@ -72,7 +72,7 @@ class observers {
 
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+            $course = get_course($courseid);
 
             if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
                 $metagroup->name = $group->name;
@@ -95,7 +95,7 @@ class observers {
 
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+            $course = get_course($courseid);
 
             if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
                 groups_delete_group($metagroup);
@@ -117,7 +117,7 @@ class observers {
 
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+            $course = get_course($courseid);
 
             if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
                 groups_add_member($metagroup, $userid, 'local_metagroups', $group->id);
@@ -139,7 +139,7 @@ class observers {
 
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+            $course = get_course($courseid);
 
             if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
                 groups_remove_member($metagroup, $userid);
