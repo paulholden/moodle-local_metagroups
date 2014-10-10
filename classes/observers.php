@@ -113,14 +113,14 @@ class observers {
         global $DB;
 
         $group = $event->get_record_snapshot('groups', $event->objectid);
-        $userid = $event->relateduserid;
+        $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
             $course = get_course($courseid);
 
             if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
-                groups_add_member($metagroup, $userid, 'local_metagroups', $group->id);
+                groups_add_member($metagroup, $user, 'local_metagroups', $group->id);
             }
         }
     }
@@ -135,14 +135,14 @@ class observers {
         global $DB;
 
         $group = $event->get_record_snapshot('groups', $event->objectid);
-        $userid = $event->relateduserid;
+        $user = \core_user::get_user($event->relateduserid, '*', MUST_EXIST);
 
         $courseids = local_metagroups_parent_courses($group->courseid);
         foreach ($courseids as $courseid) {
             $course = get_course($courseid);
 
             if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
-                groups_remove_member($metagroup, $userid);
+                groups_remove_member($metagroup, $user);
             }
         }
     }
