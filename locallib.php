@@ -58,12 +58,18 @@ function local_metagroups_child_courses($courseid) {
  * Run synchronization process
  *
  * @param progress_trace $trace
+ * @param int|null $courseid or null for all courses
  * @return void
  */
-function local_metagroups_sync(progress_trace $trace) {
+function local_metagroups_sync(progress_trace $trace, $courseid = null) {
     global $DB;
 
-    $courseids = local_metagroups_parent_courses();
+    if ($courseid !== null) {
+        $courseids = array($courseid);
+    } else {
+        $courseids = local_metagroups_parent_courses();
+    }
+
     foreach (array_unique($courseids) as $courseid) {
         $parent = get_course($courseid);
 

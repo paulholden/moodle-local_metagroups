@@ -30,7 +30,10 @@ require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 set_debugging(DEBUG_DEVELOPER, true);
 
 // Now get cli options.
-list($options, $unrecognized) = cli_get_params(array('verbose' => false, 'help' => false), array('v' => 'verbose', 'h' => 'help'));
+list($options, $unrecognized) = cli_get_params(
+    array('course' => null, 'verbose' => false, 'help' => false),
+    array('c' => 'course', 'v' => 'verbose', 'h' => 'help')
+);
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -41,7 +44,11 @@ if ($options['help']) {
     $help =
         "Execute initial meta-course group synchronization.
 
+This is recommended if installing plugin into a site with existing courses and groups, or after adding
+a new metacourse enrolment instance to a course with existing groups (use the --course switch).
+
 Options:
+-c, --course          Course ID (if not specified, then all courses will be synchronized)
 -v, --verbose         Print verbose progess information
 -h, --help            Print out this help
 
@@ -59,7 +66,7 @@ if (empty($options['verbose'])) {
     $trace = new text_progress_trace();
 }
 
-local_metagroups_sync($trace);
+local_metagroups_sync($trace, $options['course']);
 $trace->finished();
 
 exit(0);
