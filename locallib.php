@@ -51,7 +51,9 @@ function local_metagroups_parent_courses($courseid = null) {
 function local_metagroups_child_courses($courseid) {
     global $DB;
 
-    return $DB->get_records_menu('enrol', array('enrol' => 'meta', 'courseid' => $courseid, 'status' => ENROL_INSTANCE_ENABLED), 'sortorder', 'id, customint1');
+    $conditions = array('enrol' => 'meta', 'courseid' => $courseid, 'status' => ENROL_INSTANCE_ENABLED);
+
+    return $DB->get_records_menu('enrol', $conditions, 'sortorder', 'id, customint1');
 }
 
 /**
