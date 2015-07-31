@@ -102,7 +102,7 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
 
                 $users = groups_get_members($group->id);
                 foreach ($users as $user) {
-                    groups_add_member($metagroup, $user->id, 'local_metagroups', $group->id);
+                    groups_add_member($metagroup->id, $user->id, 'local_metagroups', $group->id);
                 }
             }
         }
