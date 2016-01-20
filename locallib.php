@@ -94,6 +94,11 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
                     $metagroup->courseid = $parent->id;
                     $metagroup->idnumber = $group->id;
                     $metagroup->name = $group->name;
+                    $metagroup->description = $group->description;
+                    $metagroup->descriptionformat = $group->descriptionformat;
+                    $metagroup->enrolmentkey = $group->enrolmentkey;
+                    $metagroup->picture = $group->picture;
+                    $metagroup->hidepicture = $group->hidepicture;
 
                     $metagroup->id = groups_create_group($metagroup, false, false);
                 }
