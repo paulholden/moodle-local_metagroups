@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * local_metagroups ad-hoc synchronize class
+ *
  * @package    local_metagroups
  * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,6 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 
+/**
+ * Ad-hoc synchronize class
+ */
 class synchronize extends \core\task\adhoc_task {
 
     /**
