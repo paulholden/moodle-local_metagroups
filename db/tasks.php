@@ -15,19 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version definition file
+ * Scheduled tasks definition
  *
  * @package    local_metagroups
- * @copyright  2014 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2016 Vadim Dvorovenko (vadimon@mail.ru)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_metagroups';
-$plugin->release   = '3.5';
-$plugin->version   = 2020102600;
-$plugin->requires  = 2018051703; // Moodle 3.5.3 onwards.
-$plugin->maturity  = MATURITY_STABLE;
-
-$plugin->dependencies = array('enrol_meta' => 2013110500);
+$tasks = array(
+    array(
+        'classname' => 'local_metagroups\task\scheduled',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 1
+    )
+);
