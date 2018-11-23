@@ -23,3 +23,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Meta-course group synchronization';
+$string['privacy:metadata:core_group'] = 'The Meta-course group synchronization plugin can create groups or use existing groups to add participants from parent courses';
