@@ -23,9 +23,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_metagroups';
-$plugin->release   = '1.4';
-$plugin->version   = 2018112300;
-$plugin->requires  = 2013111800; // Moodle 2.6 onwards.
+$plugin->release   = '2.0';
+$plugin->version   = 2018112301;
+$plugin->requires  = 2017051500; // Moodle 3.3 onwards.
 $plugin->maturity  = MATURITY_STABLE;
 
-$plugin->dependencies = array('enrol_meta' => 2013110500);
+$plugin->dependencies = array('enrol_meta' => 2017050500);
