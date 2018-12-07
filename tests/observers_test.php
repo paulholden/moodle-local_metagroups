@@ -57,11 +57,47 @@ class local_metagroups_observers_testcase extends advanced_testcase {
         set_config('enrol_plugins_enabled', implode(',', $enabled));
 
         // Create metacourse enrolment instance.
-        $meta = enrol_get_plugin('meta');
-        $meta->add_instance($this->course2, ['customint1' => $this->course1->id]);
+        enrol_get_plugin('meta')->add_instance($this->course2, ['customint1' => $this->course1->id]);
 
         // Create a group in parent course.
         $this->group = $this->getDataGenerator()->create_group(['courseid' => $this->course1->id]);
+    }
+
+    /**
+     * Tests enrol_instance_created event observer
+     *
+     * @return void
+     */
+    public function test_enrol_instance_created() {
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course(['groupmode' => VISIBLEGROUPS]);
+        enrol_get_plugin('meta')->add_instance($course, ['customint1' => $this->course1->id]);
+
+        // Execute queued plugin adhoc tasks.
+        ob_start();
+        $this->runAdhocTasks(\local_metagroups\task\synchronize::class);
+        ob_end_clean();
+
+        // The group from the parent should have been created in linked course.
+        $linkedgroup = $DB->get_record('groups', ['courseid' => $course->id, 'idnumber' => $this->group->id], '*', MUST_EXIST);
+        $this->assertSame($this->group->name, $linkedgroup->name);
+    }
+
+    /**
+     * Tests enrol_instance_deleted event observer
+     *
+     * @return void
+     */
+    public function test_enrol_instance_deleted() {
+        global $DB;
+
+        $instance = $DB->get_record('enrol', ['courseid' => $this->course2->id, 'enrol' => 'meta'], '*', MUST_EXIST);
+        enrol_get_plugin('meta')->delete_instance($instance);
+
+        // The group should also have been deleted in linked course.
+        $exists = $DB->record_exists('groups', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id]);
+        $this->assertFalse($exists);
     }
 
     /**

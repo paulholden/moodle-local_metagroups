@@ -16,16 +16,28 @@
 
 /**
  * @package    local_metagroups
- * @copyright  2014 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_metagroups\task;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_metagroups';
-$plugin->release   = '2.0';
-$plugin->version   = 2018120700;
-$plugin->requires  = 2017051500; // Moodle 3.3 onwards.
-$plugin->maturity  = MATURITY_STABLE;
+require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 
-$plugin->dependencies = array('enrol_meta' => 2017050500);
+class synchronize extends \core\task\adhoc_task {
+
+    /**
+     * Execute the synchronize task
+     *
+     * @return void
+     */
+    public function execute() {
+        $course = get_course($this->get_custom_data()->courseid);
+
+        $trace = new \text_progress_trace();
+        local_metagroups_sync($trace, $course->id);
+        $trace->finished();
+    }
+}

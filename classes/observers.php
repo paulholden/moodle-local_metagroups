@@ -29,6 +29,55 @@ require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 class observers {
 
     /**
+     * Enrol instance created
+     *
+     * @param \core\event\enrol_instance_created $event
+     * @return void
+     */
+    public static function enrol_instance_created(\core\event\enrol_instance_created $event) {
+        $instance = $event->get_record_snapshot('enrol', $event->objectid);
+
+        if (strcasecmp($instance->enrol, 'meta') == 0) {
+            $course = get_course($instance->courseid);
+
+            // Return early if course doesn't use groups.
+            if (groups_get_course_groupmode($course) == NOGROUPS) {
+                return;
+            }
+
+            // Immediate synchronization could be expensive, defer to adhoc task.
+            $task = new \local_metagroups\task\synchronize();
+            $task->set_custom_data(['courseid' => $course->id]);
+
+            \core\task\manager::queue_adhoc_task($task);
+        }
+    }
+
+    /**
+     * Enrol instance deleted
+     *
+     * @param \core\event\enrol_instance_deleted $event
+     * @return void
+     */
+    public static function enrol_instance_deleted(\core\event\enrol_instance_deleted $event) {
+        global $DB;
+
+        $instance = $event->get_record_snapshot('enrol', $event->objectid);
+
+        if (strcasecmp($instance->enrol, 'meta') == 0) {
+            $course = get_course($instance->courseid);
+
+            // Get groups from linked course, and delete them from current course.
+            $groups = groups_get_all_groups($instance->customint1);
+            foreach ($groups as $group) {
+                if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+                    groups_delete_group($metagroup);
+                }
+            }
+        }
+    }
+
+    /**
      * Group created
      *
      * @param \core\event\group_created $event

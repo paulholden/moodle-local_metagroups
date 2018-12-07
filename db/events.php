@@ -24,6 +24,16 @@ defined('MOODLE_INTERNAL') || die();
 
 $observers = array(
     array(
+        'eventname' => '\core\event\enrol_instance_created',
+        'callback'  => '\local_metagroups\observers::enrol_instance_created',
+    ),
+
+    array(
+        'eventname' => '\core\event\enrol_instance_deleted',
+        'callback'  => '\local_metagroups\observers::enrol_instance_deleted',
+    ),
+
+    array(
         'eventname' => '\core\event\group_created',
         'callback'  => '\local_metagroups\observers::group_created',
     ),
