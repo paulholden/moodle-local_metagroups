@@ -57,4 +57,35 @@ $observers = array(
         'eventname' => '\core\event\group_member_removed',
         'callback'  => '\local_metagroups\observers::group_member_removed',
     ),
+
+    array(
+        'eventname' => '\core\event\grouping_created',
+        'callback'  => '\local_metagroups\observers::grouping_created',
+    ),
+
+    array(
+        'eventname' => '\core\event\grouping_updated',
+        'callback'  => '\local_metagroups\observers::grouping_updated',
+    ),
+
+    array(
+        'eventname' => '\core\event\grouping_deleted',
+        'callback'  => '\local_metagroups\observers::grouping_deleted',
+    ),
+
+    array(
+        'eventname' => '\core\event\course_updated',
+        'callback'  => '\local_metagroups\observers::course_updated',
+    ),
+
+    array(
+        'eventname' => '\core\event\grouping_group_assigned',
+        'callback'  => '\local_metagroups\observers::grouping_group_assigned',
+    ),
+
+    array(
+        'eventname' => '\core\event\grouping_group_unassigned',
+        'callback'  => '\local_metagroups\observers::grouping_group_unassigned',
+    ),
+
 );

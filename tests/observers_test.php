@@ -76,7 +76,7 @@ class local_metagroups_observers_testcase extends advanced_testcase {
 
         // Execute queued plugin adhoc tasks.
         ob_start();
-        $this->runAdhocTasks(\local_metagroups\task\synchronize::class);
+        $this->runAdhocTasks(\local_metagroups\task\adhoc::class);
         ob_end_clean();
 
         // The group from the parent should have been created in linked course.

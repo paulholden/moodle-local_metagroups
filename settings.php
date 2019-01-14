@@ -15,17 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * local_metagroups plugin settings page
+ *
  * @package    local_metagroups
- * @copyright  2014 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2016 Vadim Dvorovenko (vadimon@mail.ru)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = 'local_metagroups';
-$plugin->release   = '2.1';
-$plugin->version   = 2019011400;
-$plugin->requires  = 2017051500; // Moodle 3.3 onwards.
-$plugin->maturity  = MATURITY_STABLE;
-
-$plugin->dependencies = array('enrol_meta' => 2017050500);
+if ($hassiteconfig) {
+    $settings = new admin_settingpage('local_metagroups', get_string('pluginname', 'local_metagroups'));
+    $ADMIN->add('localplugins', $settings);
+    $settings->add(new admin_setting_configcheckbox(
+            'local_metagroups/syncall',
+            get_string('syncall', 'local_metagroups'),
+            get_string('syncall_desc', 'local_metagroups'),
+            0));
+    $settings->add(new admin_setting_configcheckbox(
+            'local_metagroups/syncgroupings',
+            get_string('syncgroupings', 'local_metagroups'),
+            get_string('syncgroupings_desc', 'local_metagroups'),
+            1));
+}
