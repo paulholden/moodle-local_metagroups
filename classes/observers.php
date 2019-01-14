@@ -43,7 +43,7 @@ class observers {
             $syncall = get_config('local_metagroups', 'syncall');
 
             // Return early if course doesn't use groups.
-            if (!$syncall || groups_get_course_groupmode($course) == NOGROUPS) {
+            if (!$syncall && groups_get_course_groupmode($course) == NOGROUPS) {
                 return;
             }
 
