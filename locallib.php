@@ -57,6 +57,40 @@ function local_metagroups_child_courses($courseid) {
 }
 
 /**
+ * Returns the groups in the specified grouping.
+ *
+ * @param int $groupingid The groupingid to get the groups for
+ * @param string $fields The fields to return
+ * @param string $sort optional sorting of returned users
+ * @return array|bool Returns an array of the groups for the specified
+ * group or false if no groups or an error returned.
+ */
+function local_metagroups_get_grouping_groups($groupingid, $fields = 'g.*', $sort = 'name ASC') {
+    global $DB;
+
+    return $DB->get_records_sql("SELECT $fields
+                                   FROM {groups} g, {groupings_groups} gg
+                                  WHERE g.id = gg.groupid AND gg.groupingid = ?
+                               ORDER BY $sort", array($groupingid));
+}
+
+/**
+ * Returns the group id of a group in a parent course matching the child course.
+ *
+ * @param int $groupid The groupid to get the group for
+ * @param int $courseid The course "parent" id
+ * @return array|bool Returns an array of the id for the specified
+ * course or false if no group or an error returned.
+ */
+function local_metagroups_group_match($groupid, $courseid) {
+    global $DB;
+
+    return $DB->get_records_sql("SELECT g.id
+                                   FROM {groups} g
+                                  WHERE g.idnumber = $groupid AND g.courseid=$courseid");
+}
+
+/**
  * Run synchronization process
  *
  * @param progress_trace $trace
@@ -72,11 +106,14 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
         $courseids = local_metagroups_parent_courses();
     }
 
+    $syncall = get_config('local_metagroups', 'syncall');
+    $syncgroupings = get_config('local_metagroups', 'syncgroupings');
+
     foreach (array_unique($courseids) as $courseid) {
         $parent = get_course($courseid);
 
-        // If parent course doesn't use groups, we can skip synchronization.
-        if (groups_get_course_groupmode($parent) == NOGROUPS) {
+        // If parent course doesn't use groups and syncall disabled, we can skip synchronization.
+        if (!$syncall && groups_get_course_groupmode($parent) == NOGROUPS) {
             continue;
         }
 
@@ -94,6 +131,12 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
                     $metagroup->courseid = $parent->id;
                     $metagroup->idnumber = $group->id;
                     $metagroup->name = $group->name;
+                    $metagroup->description = $group->description;
+                    $metagroup->descriptionformat = $group->descriptionformat;
+                    $metagroup->picture = $group->picture;
+                    $metagroup->hidepicture = $group->hidepicture;
+                    // No need to sync enrolmentkey, user should be able to enrol only on source course.
+                    $metagroup->enrolmentkey = null;
 
                     $metagroup->id = groups_create_group($metagroup, false, false);
                 }
@@ -103,6 +146,40 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
                 $users = groups_get_members($group->id);
                 foreach ($users as $user) {
                     groups_add_member($metagroup->id, $user->id, 'local_metagroups', $group->id);
+                }
+            }
+
+            if (!$syncgroupings) {
+                continue;
+            }
+
+            $childgroupings = groups_get_all_groupings($child->id); // Get groupings from child course.
+            foreach ($childgroupings as $grouping) { // Browse child course groupings and create in parent course if necessary.
+                if (!$metagrouping = $DB->get_record('groupings', array('courseid' => $parent->id, 'idnumber' => $grouping->id))) {
+                    $metagrouping = new stdClass();
+                    $metagrouping->courseid = $parent->id;
+                    $metagrouping->idnumber = $grouping->id;
+                    $metagrouping->name = $grouping->name;
+                    $metagrouping->id = groups_create_grouping($metagrouping);
+                }
+
+                $trace->output($metagrouping->name, 3);
+
+                // Get groups of current grouping (child course).
+                $groupinggroupschild = local_metagroups_get_grouping_groups($grouping->id);
+                // Get groups of current grouping (parent course).
+                $groupinggroupsparent = local_metagroups_get_grouping_groups($metagrouping->id);
+
+                foreach ($groupinggroupschild as $groupinggroup) {
+                    $targetgroupsid = local_metagroups_group_match($groupinggroup->id, $parent->id); // Should be one group.
+                    foreach ($targetgroupsid as $targetgroupid) {
+                        groups_assign_grouping($metagrouping->id, $targetgroupid->id);
+                        unset($groupinggroupsparent[$targetgroupid->id]); // Unset from group for unassign afterward.
+                    }
+                }
+
+                foreach ($groupinggroupsparent as $groupinggroup) { // Unassign in parent course.
+                    groups_unassign_grouping($metagrouping->id, $groupinggroup->id);
                 }
             }
         }

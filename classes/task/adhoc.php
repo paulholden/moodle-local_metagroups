@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 
-class synchronize extends \core\task\adhoc_task {
+class adhoc extends \core\task\adhoc_task {
 
     /**
      * Execute the synchronize task
