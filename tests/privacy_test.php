@@ -23,6 +23,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\request\approved_contextlist,
+    \core_privacy\local\request\userlist,
     \core_privacy\local\request\writer,
     \local_metagroups\privacy\provider;
 
@@ -102,6 +103,21 @@ class local_metagroups_privacy_testcase extends \core_privacy\tests\provider_tes
 
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertEmpty($contextlist);
+    }
+
+    /**
+     * Tests provider get_users_in_context method
+     *
+     * @return void
+     */
+    public function test_get_users_in_context() {
+        $context = context_course::instance($this->course2->id, MUST_EXIST);
+
+        $userlist = new userlist($context, 'local_metagroups');
+        provider::get_users_in_context($userlist);
+
+        $this->assertCount(1, $userlist);
+        $this->assertEquals([$this->user->id], $userlist->get_userids());
     }
 
     /**
