@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- Moodle 3.3 (build 2017051500) or later.
-- Meta-course enrolment (build 2017050500) or later.
+- Moodle 3.6 or later.
+- Meta-course enrolment plugin.
 
 ## Installation
 
