@@ -1,9 +1,9 @@
-# Meta-course group synchronization [![Build Status](https://travis-ci.org/paulholden/moodle-local_metagroups.svg?branch=master)](https://travis-ci.org/paulholden/moodle-local_metagroups)
+# Meta-course group synchronization [![Build Status](https://travis-ci.org/paulholden/moodle-local_metagroups.svg?branch=MOODLE_33_STABLE)](https://travis-ci.org/paulholden/moodle-local_metagroups)
 
 ## Requirements
 
-- Moodle 3.3 (build 2017051500) or later.
-- Meta-course enrolment (build 2017050500) or later.
+- Moodle 3.3 to 3.5.
+- Meta-course enrolment plugin.
 
 ## Installation
 
