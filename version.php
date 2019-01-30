@@ -23,8 +23,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_metagroups';
-$plugin->release   = '2.0';
-$plugin->version   = 2018120700;
+$plugin->release   = '2.1';
+$plugin->version   = 2018120701;
 $plugin->requires  = 2017051500; // Moodle 3.3 onwards.
 $plugin->maturity  = MATURITY_STABLE;
 
