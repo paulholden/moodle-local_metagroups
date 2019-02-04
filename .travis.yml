@@ -20,6 +20,9 @@ env:
 matrix:
   include:
     - php: 7.0
+      env: MOODLE_BRANCH=MOODLE_35_STABLE
+
+    - php: 7.0
       env: MOODLE_BRANCH=MOODLE_36_STABLE
 
 before_install:
