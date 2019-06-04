@@ -85,12 +85,16 @@ class local_metagroups_privacy_testcase extends \core_privacy\tests\provider_tes
      */
     public function test_get_contexts_for_userid() {
         $contextlist = provider::get_contexts_for_userid($this->user->id);
-        $this->assertCount(1, $contextlist);
 
-        list($context) = $contextlist->get_contexts();
+        // Filter out any contexts that are not related to course context.
+        $contexts = array_filter($contextlist->get_contexts(), function($context) {
+            return $context instanceof \context_course;
+        });
+
+        $this->assertCount(1, $contexts);
 
         $expected = context_course::instance($this->course2->id, MUST_EXIST);
-        $this->assertSame($expected, $context);
+        $this->assertSame($expected, reset($contexts));
     }
 
     /**
@@ -102,7 +106,13 @@ class local_metagroups_privacy_testcase extends \core_privacy\tests\provider_tes
         $user = $this->getDataGenerator()->create_user();
 
         $contextlist = provider::get_contexts_for_userid($user->id);
-        $this->assertEmpty($contextlist);
+
+        // Filter out any contexts that are not related to course context.
+        $contexts = array_filter($contextlist->get_contexts(), function($context) {
+            return $context instanceof \context_course;
+        });
+
+        $this->assertEmpty($contexts);
     }
 
     /**
