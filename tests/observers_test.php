@@ -22,20 +22,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use local_metagroups\task\synchronize;
+
 /**
  * Unit tests for event observers
  *
- * @group local_metagroups
+ * @package     local_metagroups
+ * @group       local_metagroups
+ * @covers      \local_metagroups\observers
+ * @copyright   2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_metagroups_observers_testcase extends advanced_testcase {
 
-    /** @var stdClass test course. */
+    /** @var stdClass $course1 */
     protected $course1;
 
-    /** @var stdClass test linked course. */
+    /** @var stdClass $course2 */
     protected $course2;
 
-    /** @var stdClass test group. */
+    /** @var stdClass $group */
     protected $group;
 
     /**
@@ -76,7 +82,7 @@ class local_metagroups_observers_testcase extends advanced_testcase {
 
         // Execute queued plugin adhoc tasks.
         ob_start();
-        $this->runAdhocTasks(\local_metagroups\task\synchronize::class);
+        $this->runAdhocTasks(synchronize::class);
         ob_end_clean();
 
         // The group from the parent should have been created in linked course.
@@ -109,8 +115,8 @@ class local_metagroups_observers_testcase extends advanced_testcase {
         global $DB;
 
         // The group should also have been created in linked course.
-        $linkedgroup = $DB->get_record('groups', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id], '*', MUST_EXIST);
-        $this->assertSame($this->group->name, $linkedgroup->name);
+        $linkedgroupname = $DB->get_field('groups', 'name', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id]);
+        $this->assertSame($this->group->name, $linkedgroupname);
     }
 
     /**
@@ -121,12 +127,12 @@ class local_metagroups_observers_testcase extends advanced_testcase {
     public function test_group_updated() {
         global $DB;
 
-        $this->group->name = \core_text::strrev($this->group->name);
+        $this->group->name = core_text::strrev($this->group->name);
         groups_update_group($this->group);
 
         // The group should also have been updated in linked course.
-        $linkedgroup = $DB->get_record('groups', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id], '*', MUST_EXIST);
-        $this->assertSame($this->group->name, $linkedgroup->name);
+        $linkedgroupname = $DB->get_field('groups', 'name', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id]);
+        $this->assertSame($this->group->name, $linkedgroupname);
     }
 
     /**
@@ -152,16 +158,14 @@ class local_metagroups_observers_testcase extends advanced_testcase {
     public function test_group_member_added() {
         global $DB;
 
-        $user = $this->getDataGenerator()->create_user();
-
-        $this->getDataGenerator()->enrol_user($user->id, $this->course1->id, 'student');
+        $user = $this->getDataGenerator()->create_and_enrol($this->course1, 'student');
         $this->getDataGenerator()->create_group_member(['groupid' => $this->group->id, 'userid' => $user->id]);
 
         // User should also be a member of group in linked course.
-        $linkedgroup = $DB->get_record('groups', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id], '*', MUST_EXIST);
+        $linkedgroupid = $DB->get_field('groups', 'id', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id]);
 
         $exists = $DB->record_exists('groups_members',
-            ['groupid' => $linkedgroup->id, 'userid' => $user->id, 'component' => 'local_metagroups', 'itemid' => $this->group->id]);
+            ['groupid' => $linkedgroupid, 'userid' => $user->id, 'component' => 'local_metagroups', 'itemid' => $this->group->id]);
         $this->assertTrue($exists);
     }
 
@@ -173,18 +177,16 @@ class local_metagroups_observers_testcase extends advanced_testcase {
     public function test_group_member_removed() {
         global $DB;
 
-        $user = $this->getDataGenerator()->create_user();
-
-        $this->getDataGenerator()->enrol_user($user->id, $this->course1->id, 'student');
+        $user = $this->getDataGenerator()->create_and_enrol($this->course1, 'student');
         $this->getDataGenerator()->create_group_member(['groupid' => $this->group->id, 'userid' => $user->id]);
 
         groups_remove_member($this->group, $user);
 
         // User should no longer be a member of group in linked course.
-        $linkedgroup = $DB->get_record('groups', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id], '*', MUST_EXIST);
+        $linkedgroupid = $DB->get_field('groups', 'id', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id]);
 
         $exists = $DB->record_exists('groups_members',
-            ['groupid' => $linkedgroup->id, 'userid' => $user->id, 'component' => 'local_metagroups', 'itemid' => $this->group->id]);
+            ['groupid' => $linkedgroupid, 'userid' => $user->id, 'component' => 'local_metagroups', 'itemid' => $this->group->id]);
         $this->assertFalse($exists);
     }
 }

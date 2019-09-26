@@ -22,28 +22,32 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\local\request\approved_contextlist,
-    \core_privacy\local\request\userlist,
-    \core_privacy\local\request\writer,
-    \local_metagroups\privacy\provider;
+use core_privacy\local\request\userlist;
+use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
+use local_metagroups\privacy\provider;
 
 /**
  * Unit tests for Privacy API
  *
- * @group local_metagroups
+ * @package     local_metagroups
+ * @group       local_metagroups
+ * @covers      \local_metagroups\privacy\provider
+ * @copyright   2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_metagroups_privacy_testcase extends \core_privacy\tests\provider_testcase {
+class local_metagroups_privacy_testcase extends provider_testcase {
 
-    /** @var stdClass test course. */
+    /** @var stdClass $course1 */
     protected $course1;
 
-    /** @var stdClass test linked course. */
+    /** @var stdClass $course2 */
     protected $course2;
 
-    /** @var stdClass test group. */
+    /** @var stdClass $group */
     protected $group;
 
-    /** @var stdClass test user. */
+    /** @var stdClass $user */
     protected $user;
 
     /**
@@ -72,9 +76,7 @@ class local_metagroups_privacy_testcase extends \core_privacy\tests\provider_tes
         $this->group = $this->getDataGenerator()->create_group(['courseid' => $this->course1->id]);
 
         // Create user, add them to parent course/group.
-        $this->user = $this->getDataGenerator()->create_user();
-
-        $this->getDataGenerator()->enrol_user($this->user->id, $this->course1->id, 'student');
+        $this->user = $this->getDataGenerator()->create_and_enrol($this->course1, 'student');
         $this->getDataGenerator()->create_group_member(['groupid' => $this->group->id, 'userid' => $this->user->id]);
     }
 
@@ -88,7 +90,7 @@ class local_metagroups_privacy_testcase extends \core_privacy\tests\provider_tes
 
         // Filter out any contexts that are not related to course context.
         $contexts = array_filter($contextlist->get_contexts(), function($context) {
-            return $context instanceof \context_course;
+            return $context instanceof context_course;
         });
 
         $this->assertCount(1, $contexts);
@@ -109,7 +111,7 @@ class local_metagroups_privacy_testcase extends \core_privacy\tests\provider_tes
 
         // Filter out any contexts that are not related to course context.
         $contexts = array_filter($contextlist->get_contexts(), function($context) {
-            return $context instanceof \context_course;
+            return $context instanceof context_course;
         });
 
         $this->assertEmpty($contexts);
@@ -138,12 +140,9 @@ class local_metagroups_privacy_testcase extends \core_privacy\tests\provider_tes
     public function test_export_user_data() {
         $this->setUser($this->user);
 
-        $contextlist = provider::get_contexts_for_userid($this->user->id);
-        $approvedcontextlist = new approved_contextlist($this->user, 'local_metagroups', $contextlist->get_contextids());
+        $context = context_course::instance($this->course2->id, MUST_EXIST);
+        $this->export_context_data_for_user($this->user->id, $context, 'local_metagroups');
 
-        provider::export_user_data($approvedcontextlist);
-
-        list($context) = $approvedcontextlist->get_contexts();
         $contextpath = [get_string('pluginname', 'local_metagroups'), get_string('groups', 'core_group')];
 
         $writer = writer::with_context($context);

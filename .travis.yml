@@ -43,5 +43,5 @@ install:
   - moodle-plugin-ci install
 
 script:
-  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci phpunit --coverage-text
   - moodle-plugin-ci behat
