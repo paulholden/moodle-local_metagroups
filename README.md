@@ -7,7 +7,7 @@
 
 ## Installation
 
-Copy the metagroups folder into your Moodle /local directory and visit your Admin Notification page to complete the installation.
+Copy the metagroups folder into your Moodle /local directory and visit your admin notification page to complete the installation.
 
 ## Usage
 
@@ -19,7 +19,7 @@ reflected in 'parent' courses that use groups.
 
 ## Author
 
-Paul Holden (pholden@greenhead.ac.uk)
+Paul Holden (paulh@moodle.com)
 
 - Updates: https://moodle.org/plugins/view.php?plugin=local_metagroups
 - Latest code: https://github.com/paulholden/moodle-local_metagroups

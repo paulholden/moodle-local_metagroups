@@ -4,9 +4,6 @@ sudo: required
 
 addons:
   firefox: "47.0.1"
-  apt:
-    packages:
-      - openjdk-8-jre-headless
 
 services:
   - mysql
@@ -30,6 +27,9 @@ matrix:
 
     - php: 7.1
       env: MOODLE_BRANCH=MOODLE_37_STABLE
+
+    - php: 7.2
+      env: MOODLE_BRANCH=MOODLE_38_STABLE
 
 before_install:
   - phpenv config-rm xdebug.ini
