@@ -1,21 +1,24 @@
 language: php
 
-sudo: required
-
 addons:
-  firefox: "47.0.1"
+  postgresql: "9.5"
+  apt:
+    packages:
+      - chromium-chromedriver
 
 services:
-  - mysql
+  - docker
+  - postgresql
 
 cache:
   directories:
     - $HOME/.composer/cache
     - $HOME/.npm
+    - $HOME/.nvm
 
 env:
   global:
-    - DB=mysqli
+    - DB=pgsql
 
 matrix:
   include:
@@ -23,7 +26,7 @@ matrix:
       env: MOODLE_BRANCH=MOODLE_35_STABLE
 
     - php: 7.0
-      env: MOODLE_BRANCH=MOODLE_36_STABLE
+      env: MOODLE_BRANCH=MOODLE_36_STABLE NODE=8.9
 
     - php: 7.1
       env: MOODLE_BRANCH=MOODLE_37_STABLE
@@ -31,17 +34,22 @@ matrix:
     - php: 7.2
       env: MOODLE_BRANCH=MOODLE_38_STABLE
 
+    - php: 7.3
+      env: MOODLE_BRANCH=MOODLE_39_STABLE
+
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install 8.9
-  - nvm use 8.9
+  - nvm install ${NODE:-14}
+  - nvm use ${NODE:-14}
   - cd ../..
   - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+  - docker run -d -p 127.0.0.1:4444:4444 --net=host -v /dev/shm:/dev/shm selenium/standalone-chrome:3
 
 install:
   - moodle-plugin-ci install
 
 script:
+  - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit --coverage-text
-  - moodle-plugin-ci behat
+  - moodle-plugin-ci behat --profile chrome
