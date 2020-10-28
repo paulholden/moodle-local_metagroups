@@ -30,4 +30,4 @@ $plugin->version   = 2020102600;
 $plugin->requires  = 2018051703; // Moodle 3.5.3 onwards.
 $plugin->maturity  = MATURITY_STABLE;
 
-$plugin->dependencies = array('enrol_meta' => 2013110500);
+$plugin->dependencies = array('enrol_meta' => 2018051400);
