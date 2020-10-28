@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * local_metagroups privacy provider class
+ *
  * @package    local_metagroups
  * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,6 +32,9 @@ use \core_privacy\local\metadata\collection,
     \core_privacy\local\request\userlist,
     \core_privacy\local\request\approved_userlist;
 
+/**
+ * Privacy provider class
+ */
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\core_userlist_provider,

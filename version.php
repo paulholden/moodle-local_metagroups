@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Version definition file
+ *
  * @package    local_metagroups
  * @copyright  2014 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_metagroups';
-$plugin->release   = '3.4';
-$plugin->version   = 2020061800;
+$plugin->release   = '3.5';
+$plugin->version   = 2020102600;
 $plugin->requires  = 2018051703; // Moodle 3.5.3 onwards.
 $plugin->maturity  = MATURITY_STABLE;
 

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Test coverage class
+ *
  * @package     local_metagroups
  * @copyright   2019 Paul Holden (paulh@moodle.com)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

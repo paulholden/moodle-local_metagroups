@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Event observers impementation
+ *
  * @package    local_metagroups
  * @copyright  2014 Paul Holden (pholden@greenhead.ac.uk)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,6 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 
+/**
+ * Class for event observers
+ *
+ * @package    local_metagroups
+ * @copyright  2014 Paul Holden (pholden@greenhead.ac.uk)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class observers {
 
     /**

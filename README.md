@@ -12,7 +12,8 @@ Copy the metagroups folder into your Moodle /local directory and visit your admi
 ## Usage
 
 After installation, or when creating new meta-course enrolment instances, you may need to synchronize existing groups. To do this
-run the cli/sync.php script (use the --help switch for further instructions on usage).
+run the cli/sync.php script (use the --help switch for further instructions on usage) or enable Meta-course group synchronization
+scheduled task.
 
 Any future amendments to groups (add, update and delete) and their membership (add or remove users) in 'child' courses will be automatically
 reflected in 'parent' courses that use groups.

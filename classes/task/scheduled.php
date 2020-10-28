@@ -15,34 +15,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * local_metagroups ad-hoc synchronize class
+ * Sync scheduled task
  *
  * @package    local_metagroups
- * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright  2016 Vadim Dvorovenko (vadimon@mail.ru)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_metagroups\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 
 /**
- * Ad-hoc synchronize class
+ * Class for sync scheduled task
+ * @package    local_metagroups
+ * @copyright  2016 Vadim Dvorovenko (vadimon@mail.ru)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class synchronize extends \core\task\adhoc_task {
+class scheduled extends \core\task\scheduled_task {
 
     /**
-     * Execute the synchronize task
+     * Get a descriptive name for this task (shown to admins).
      *
-     * @return void
+     * @return string
+     */
+    public function get_name() {
+        return get_string('synctask', 'local_metagroups');
+    }
+
+    /**
+     * Do the job.
+     * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        $course = get_course($this->get_custom_data()->courseid);
-
-        $trace = new \text_progress_trace();
-        local_metagroups_sync($trace, $course->id);
+        $trace = new text_progress_trace();
+        local_metagroups_sync($trace, null);
         $trace->finished();
     }
 }
