@@ -20,8 +20,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 use local_metagroups\task\synchronize;
 
 /**
@@ -49,7 +47,7 @@ class local_metagroups_observers_testcase extends advanced_testcase {
      *
      * @return void
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest(true);
 
         // Create test courses.

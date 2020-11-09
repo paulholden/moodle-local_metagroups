@@ -1,4 +1,4 @@
-# Meta-course group synchronization [![Build Status](https://travis-ci.org/paulholden/moodle-local_metagroups.svg?branch=master)](https://travis-ci.org/paulholden/moodle-local_metagroups)
+# Meta-course group synchronization [![Build Status](https://travis-ci.com/paulholden/moodle-local_metagroups.svg?branch=master)](https://travis-ci.com/paulholden/moodle-local_metagroups)
 
 ## Requirements
 
