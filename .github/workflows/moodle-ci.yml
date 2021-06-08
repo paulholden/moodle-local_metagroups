@@ -20,14 +20,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '7.1'
-            moodle-branch: 'MOODLE_35_STABLE'
-          - php: '7.2'
-            moodle-branch: 'MOODLE_38_STABLE'
           - php: '7.3'
             moodle-branch: 'MOODLE_39_STABLE'
           - php: '7.3'
             moodle-branch: 'MOODLE_310_STABLE'
+          - php: '7.4'
+            moodle-branch: 'MOODLE_311_STABLE'
 
     steps:
       - name: Check out repository code
