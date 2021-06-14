@@ -94,8 +94,14 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
                     $metagroup->courseid = $parent->id;
                     $metagroup->idnumber = $group->id;
                     $metagroup->name = $group->name;
+                    // No need to sync enrolmentkey, user should be able to enrol only on source course.
+                    $metagroup->enrolmentkey = null;
 
                     $metagroup->id = groups_create_group($metagroup, false, false);
+
+                    // Update description and icon. Cannot do this before creation, because new group id needed for filearea.
+                    local_metagroups_sync_description_and_picture($metagroup, $group);
+                    groups_update_group($metagroup, false, false);
                 }
 
                 $trace->output($metagroup->name, 3);
@@ -107,4 +113,59 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
             }
         }
     }
+}
+
+/**
+ * Synchronize description and picture
+ *
+ * @param stdClass $metagroup
+ * @param stdClass $group
+ * @return void
+ */
+function local_metagroups_sync_description_and_picture($metagroup, $group) {
+    $metagroup->description = $group->description;
+    $metagroup->descriptionformat = $group->descriptionformat;
+    local_metagroups_sync_filearea($group, $metagroup, 'description');
+    $metagroup->picture = local_metagroups_sync_filearea($group, $metagroup, 'icon', $group->picture);
+    $metagroup->hidepicture = $group->hidepicture;
+}
+
+/**
+ * Synchronize fileareas
+ *
+ * @param stdClass $sourcegroup
+ * @param stdClass $targetgroup
+ * @param string $filearea
+ * @param int|null $sourcepicture
+ * @return int
+ */
+function local_metagroups_sync_filearea($sourcegroup, $targetgroup, $filearea, $sourcepicture = null) {
+    $component = 'group';
+    $sourcecontextid = context_course::instance($sourcegroup->courseid)->id;
+    $targetcontextid = context_course::instance($targetgroup->courseid)->id;
+
+    $fs = get_file_storage();
+    // Remove all files in target area
+    $targetfiles = $fs->get_area_files($targetcontextid, $component, $filearea, $targetgroup->id);
+    foreach ($targetfiles as $targetfile) {
+        $targetfile->delete();
+    }
+    // Copy all files from source to target
+    $sourcefiles = $fs->get_area_files($sourcecontextid, $component, $filearea, $sourcegroup->id);
+    $targetpicture = 0;
+    foreach ($sourcefiles as $sourcefile) {
+        $targetfile = $fs->create_file_from_storedfile(
+            [
+                'contextid' => $targetcontextid,
+                'component' => $component,
+                'filearea' => $filearea,
+                'itemid' => $targetgroup->id,
+            ],
+            $sourcefile
+        );
+        if ($sourcepicture && $sourcefile->get_id() == $sourcepicture) {
+            $targetpicture = $targetfile->get_id();
+        }
+    }
+    return $targetpicture;
 }
