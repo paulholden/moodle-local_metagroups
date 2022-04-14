@@ -14,24 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    local_metagroups
- * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace local_metagroups;
 
+use advanced_testcase;
+use core_text;
+use stdClass;
 use local_metagroups\task\synchronize;
 
 /**
  * Unit tests for event observers
  *
  * @package     local_metagroups
- * @group       local_metagroups
  * @covers      \local_metagroups\observers
- * @copyright   2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @copyright   2018 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_metagroups_observers_testcase extends advanced_testcase {
+class observers_test extends advanced_testcase {
 
     /** @var stdClass $course1 */
     protected $course1;

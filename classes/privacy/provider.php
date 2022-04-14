@@ -14,15 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    local_metagroups
- * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace local_metagroups\privacy;
-
-defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\local\metadata\collection,
     \core_privacy\local\request\contextlist,
@@ -30,6 +22,13 @@ use \core_privacy\local\metadata\collection,
     \core_privacy\local\request\userlist,
     \core_privacy\local\request\approved_userlist;
 
+/**
+ * Plugin privacy provider
+ *
+ * @package    local_metagroups
+ * @copyright  2018 Paul Holden <paulh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\core_userlist_provider,

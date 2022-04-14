@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    local_metagroups
- * @copyright  2018 Paul Holden (pholden@greenhead.ac.uk)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace local_metagroups\task;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 
+/**
+ * Adhoc task to perform group synchronization
+ *
+ * @package    local_metagroups
+ * @copyright  2018 Paul Holden <paulh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class synchronize extends \core\task\adhoc_task {
 
     /**
