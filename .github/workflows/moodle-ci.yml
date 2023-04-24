@@ -8,7 +8,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:12
+        image: postgres:13
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -30,6 +30,8 @@ jobs:
             moodle-branch: 'MOODLE_400_STABLE'
           - php: '8.0'
             moodle-branch: 'MOODLE_401_STABLE'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_402_STABLE'
 
     steps:
       - name: Check out repository code
@@ -41,6 +43,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
           ini-values: max_input_vars=5000
           coverage: none
 
@@ -61,7 +64,7 @@ jobs:
 
       - name: Code checker
         if: ${{ always() }}
-        run: moodle-plugin-ci codechecker --max-warnings 0
+        run: moodle-plugin-ci phpcs --max-warnings 0
 
       - name: Grunt
         if: ${{ always() }}
