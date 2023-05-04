@@ -20,10 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '7.3'
+          - php: '7.4'
             moodle-branch: 'MOODLE_39_STABLE'
-          - php: '7.3'
-            moodle-branch: 'MOODLE_310_STABLE'
           - php: '7.4'
             moodle-branch: 'MOODLE_311_STABLE'
           - php: '7.4'
@@ -45,11 +43,11 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: ${{ matrix.extensions }}
           ini-values: max_input_vars=5000
-          coverage: none
+          coverage: xdebug
 
       - name: Initialise moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
