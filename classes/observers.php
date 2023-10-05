@@ -72,7 +72,7 @@ class observers {
             // Get groups from linked course, and delete them from current course.
             $groups = groups_get_all_groups($instance->customint1);
             foreach ($groups as $group) {
-                if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+                if ($metagroup = $DB->get_record('groups', ['courseid' => $course->id, 'idnumber' => $group->id])) {
                     groups_delete_group($metagroup);
                 }
             }
@@ -99,7 +99,7 @@ class observers {
                 continue;
             }
 
-            if (! $DB->record_exists('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+            if (! $DB->record_exists('groups', ['courseid' => $course->id, 'idnumber' => $group->id])) {
                 $metagroup = new \stdClass();
                 $metagroup->courseid = $course->id;
                 $metagroup->idnumber = $group->id;
@@ -125,7 +125,7 @@ class observers {
         foreach ($courseids as $courseid) {
             $course = get_course($courseid);
 
-            if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+            if ($metagroup = $DB->get_record('groups', ['courseid' => $course->id, 'idnumber' => $group->id])) {
                 $metagroup->name = $group->name;
 
                 groups_update_group($metagroup, false, false);
@@ -148,7 +148,7 @@ class observers {
         foreach ($courseids as $courseid) {
             $course = get_course($courseid);
 
-            if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+            if ($metagroup = $DB->get_record('groups', ['courseid' => $course->id, 'idnumber' => $group->id])) {
                 groups_delete_group($metagroup);
             }
         }
@@ -170,7 +170,7 @@ class observers {
         foreach ($courseids as $courseid) {
             $course = get_course($courseid);
 
-            if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+            if ($metagroup = $DB->get_record('groups', ['courseid' => $course->id, 'idnumber' => $group->id])) {
                 groups_add_member($metagroup, $user, 'local_metagroups', $group->id);
             }
         }
@@ -192,7 +192,7 @@ class observers {
         foreach ($courseids as $courseid) {
             $course = get_course($courseid);
 
-            if ($metagroup = $DB->get_record('groups', array('courseid' => $course->id, 'idnumber' => $group->id))) {
+            if ($metagroup = $DB->get_record('groups', ['courseid' => $course->id, 'idnumber' => $group->id])) {
                 groups_remove_member($metagroup, $user);
             }
         }

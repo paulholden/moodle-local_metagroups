@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/group/lib.php');
 function local_metagroups_parent_courses($courseid = null) {
     global $DB;
 
-    $conditions = array('enrol' => 'meta', 'status' => ENROL_INSTANCE_ENABLED);
+    $conditions = ['enrol' => 'meta', 'status' => ENROL_INSTANCE_ENABLED];
     if ($courseid !== null) {
         $conditions['customint1'] = $courseid;
     }
@@ -53,7 +53,7 @@ function local_metagroups_parent_courses($courseid = null) {
 function local_metagroups_child_courses($courseid) {
     global $DB;
 
-    $conditions = array('enrol' => 'meta', 'courseid' => $courseid, 'status' => ENROL_INSTANCE_ENABLED);
+    $conditions = ['enrol' => 'meta', 'courseid' => $courseid, 'status' => ENROL_INSTANCE_ENABLED];
 
     return $DB->get_records_menu('enrol', $conditions, 'sortorder', 'id, customint1');
 }
@@ -69,7 +69,7 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
     global $DB;
 
     if ($courseid !== null) {
-        $courseids = array($courseid);
+        $courseids = [$courseid];
     } else {
         $courseids = local_metagroups_parent_courses();
     }
@@ -91,7 +91,7 @@ function local_metagroups_sync(progress_trace $trace, $courseid = null) {
 
             $groups = groups_get_all_groups($child->id);
             foreach ($groups as $group) {
-                if (! $metagroup = $DB->get_record('groups', array('courseid' => $parent->id, 'idnumber' => $group->id))) {
+                if (! $metagroup = $DB->get_record('groups', ['courseid' => $parent->id, 'idnumber' => $group->id])) {
                     $metagroup = new stdClass();
                     $metagroup->courseid = $parent->id;
                     $metagroup->idnumber = $group->id;

@@ -33,8 +33,8 @@ set_debugging(DEBUG_DEVELOPER, true);
 
 // Now get cli options.
 list($options, $unrecognized) = cli_get_params(
-    array('course' => null, 'verbose' => false, 'help' => false),
-    array('c' => 'course', 'v' => 'verbose', 'h' => 'help')
+    ['course' => null, 'verbose' => false, 'help' => false],
+    ['c' => 'course', 'v' => 'verbose', 'h' => 'help']
 );
 
 if ($unrecognized) {

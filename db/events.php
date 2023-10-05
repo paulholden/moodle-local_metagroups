@@ -24,39 +24,39 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$observers = array(
-    array(
+$observers = [
+    [
         'eventname' => '\core\event\enrol_instance_created',
         'callback'  => '\local_metagroups\observers::enrol_instance_created',
-    ),
+    ],
 
-    array(
+    [
         'eventname' => '\core\event\enrol_instance_deleted',
         'callback'  => '\local_metagroups\observers::enrol_instance_deleted',
-    ),
+    ],
 
-    array(
+    [
         'eventname' => '\core\event\group_created',
         'callback'  => '\local_metagroups\observers::group_created',
-    ),
+    ],
 
-    array(
+    [
         'eventname' => '\core\event\group_updated',
         'callback'  => '\local_metagroups\observers::group_updated',
-    ),
+    ],
 
-    array(
+    [
         'eventname' => '\core\event\group_deleted',
         'callback'  => '\local_metagroups\observers::group_deleted',
-    ),
+    ],
 
-    array(
+    [
         'eventname' => '\core\event\group_member_added',
         'callback'  => '\local_metagroups\observers::group_member_added',
-    ),
+    ],
 
-    array(
+    [
         'eventname' => '\core\event\group_member_removed',
         'callback'  => '\local_metagroups\observers::group_member_removed',
-    ),
-);
+    ],
+];
