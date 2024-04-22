@@ -29,7 +29,7 @@ use local_metagroups\task\synchronize;
  * @copyright   2018 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class observers_test extends advanced_testcase {
+final class observers_test extends advanced_testcase {
 
     /** @var stdClass $course1 */
     protected $course1;
@@ -67,10 +67,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests enrol_instance_created event observer
-     *
-     * @return void
      */
-    public function test_enrol_instance_created() {
+    public function test_enrol_instance_created(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course(['groupmode' => VISIBLEGROUPS]);
@@ -88,10 +86,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests enrol_instance_deleted event observer
-     *
-     * @return void
      */
-    public function test_enrol_instance_deleted() {
+    public function test_enrol_instance_deleted(): void {
         global $DB;
 
         $instance = $DB->get_record('enrol', ['courseid' => $this->course2->id, 'enrol' => 'meta'], '*', MUST_EXIST);
@@ -104,10 +100,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests group_created event observer
-     *
-     * @return void
      */
-    public function test_group_created() {
+    public function test_group_created(): void {
         global $DB;
 
         // The group should also have been created in linked course.
@@ -117,10 +111,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests group_updated event observer
-     *
-     * @return void
      */
-    public function test_group_updated() {
+    public function test_group_updated(): void {
         global $DB;
 
         $this->group->name = core_text::strrev($this->group->name);
@@ -133,10 +125,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests group_deleted event observer
-     *
-     * @return void
      */
-    public function test_group_deleted() {
+    public function test_group_deleted(): void {
         global $DB;
 
         groups_delete_group($this->group);
@@ -148,10 +138,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests group_member_added event observer
-     *
-     * @return void
      */
-    public function test_group_member_added() {
+    public function test_group_member_added(): void {
         global $DB;
 
         $user = $this->getDataGenerator()->create_and_enrol($this->course1, 'student');
@@ -167,10 +155,8 @@ class observers_test extends advanced_testcase {
 
     /**
      * Tests group_member_added event observer
-     *
-     * @return void
      */
-    public function test_group_member_removed() {
+    public function test_group_member_removed(): void {
         global $DB;
 
         $user = $this->getDataGenerator()->create_and_enrol($this->course1, 'student');

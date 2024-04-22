@@ -30,7 +30,7 @@ use core_privacy\tests\provider_testcase;
  * @copyright   2018 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider_test extends provider_testcase {
+final class provider_test extends provider_testcase {
 
     /** @var stdClass $course1 */
     protected $course1;
@@ -76,10 +76,8 @@ class provider_test extends provider_testcase {
 
     /**
      * Tests provider get_contexts_for_userid method
-     *
-     * @return void
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $contextlist = provider::get_contexts_for_userid($this->user->id);
 
         // Filter out any contexts that are not related to course context.
@@ -95,10 +93,8 @@ class provider_test extends provider_testcase {
 
     /**
      * Tests provider get_contexts_for_userid method when user has no group membership
-     *
-     * @return void
      */
-    public function test_get_contexts_for_userid_no_group_membership() {
+    public function test_get_contexts_for_userid_no_group_membership(): void {
         $user = $this->getDataGenerator()->create_user();
 
         $contextlist = provider::get_contexts_for_userid($user->id);
@@ -113,10 +109,8 @@ class provider_test extends provider_testcase {
 
     /**
      * Tests provider get_users_in_context method
-     *
-     * @return void
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $context = context_course::instance($this->course2->id, MUST_EXIST);
 
         $userlist = new userlist($context, 'local_metagroups');
@@ -128,10 +122,8 @@ class provider_test extends provider_testcase {
 
     /**
      * Test provider export_user_data method
-     *
-     * @return void
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->setUser($this->user);
 
         $context = context_course::instance($this->course2->id, MUST_EXIST);
