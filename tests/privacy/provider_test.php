@@ -50,6 +50,8 @@ final class provider_test extends provider_testcase {
      * @return void
      */
     protected function setUp(): void {
+        parent::setUp();
+
         $this->resetAfterTest(true);
 
         // Create test courses.
