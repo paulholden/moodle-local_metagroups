@@ -104,8 +104,14 @@ class observers {
                 $metagroup->courseid = $course->id;
                 $metagroup->idnumber = $group->id;
                 $metagroup->name = $group->name;
+                // No need to sync enrolmentkey, user should be able to enrol only on source course.
+                $metagroup->enrolmentkey = null;
 
                 groups_create_group($metagroup, false, false);
+
+                // Update description and icon. Cannot do this before creation, because new group id needed for filearea.
+                local_metagroups_sync_description_and_picture($metagroup, $group);
+                groups_update_group($metagroup, false, false);
             }
         }
     }
@@ -127,6 +133,9 @@ class observers {
 
             if ($metagroup = $DB->get_record('groups', ['courseid' => $course->id, 'idnumber' => $group->id])) {
                 $metagroup->name = $group->name;
+                // No need to sync enrolmentkey, user should be able to enrol only on source course.
+                $metagroup->enrolmentkey = null;
+                local_metagroups_sync_description_and_picture($metagroup, $group);
 
                 groups_update_group($metagroup, false, false);
             }
