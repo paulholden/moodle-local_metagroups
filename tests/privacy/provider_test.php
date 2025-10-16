@@ -16,6 +16,7 @@
 
 namespace local_metagroups\privacy;
 
+use context;
 use context_course;
 use stdClass;
 use core_privacy\local\request\userlist;
@@ -31,7 +32,6 @@ use core_privacy\tests\provider_testcase;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class provider_test extends provider_testcase {
-
     /** @var stdClass $course1 */
     protected $course1;
 
@@ -83,9 +83,10 @@ final class provider_test extends provider_testcase {
         $contextlist = provider::get_contexts_for_userid($this->user->id);
 
         // Filter out any contexts that are not related to course context.
-        $contexts = array_filter($contextlist->get_contexts(), function($context) {
-            return $context instanceof context_course;
-        });
+        $contexts = array_filter(
+            $contextlist->get_contexts(),
+            fn(context $context) => $context instanceof context_course,
+        );
 
         $this->assertCount(1, $contexts);
 
@@ -102,9 +103,10 @@ final class provider_test extends provider_testcase {
         $contextlist = provider::get_contexts_for_userid($user->id);
 
         // Filter out any contexts that are not related to course context.
-        $contexts = array_filter($contextlist->get_contexts(), function($context) {
-            return $context instanceof context_course;
-        });
+        $contexts = array_filter(
+            $contextlist->get_contexts(),
+            fn(context $context) => $context instanceof context_course,
+        );
 
         $this->assertEmpty($contexts);
     }

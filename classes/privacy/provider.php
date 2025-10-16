@@ -30,10 +30,9 @@ use core_privacy\local\request\approved_userlist;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-    \core_privacy\local\metadata\provider,
     \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\metadata\provider,
     \core_privacy\local\request\plugin\provider {
-
     /**
      * Returns meta data about this system.
      *
@@ -60,10 +59,9 @@ class provider implements
      * Get the list of users who have data within a context.
      *
      * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
-     * @return void
      */
     public static function get_users_in_context(userlist $userlist) {
-        return \core_group\privacy\provider::get_group_members_in_context($userlist, 'local_metagroups');
+        \core_group\privacy\provider::get_group_members_in_context($userlist, 'local_metagroups');
     }
 
     /**
@@ -83,30 +81,24 @@ class provider implements
     /**
      * Delete all user data in the specified context.
      *
-     * @param context $context
-     * @return void
+     * @param \context $context
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
-
     }
 
     /**
      * Delete multiple users within a single context.
      *
      * @param approved_userlist $userlist The approved context and user information to delete information for.
-     * @return void
      */
     public static function delete_data_for_users(approved_userlist $userlist) {
-
     }
 
     /**
      * Delete all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
-     * @return void
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
-
     }
 }

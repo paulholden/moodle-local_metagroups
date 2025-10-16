@@ -29,7 +29,6 @@ require_once($CFG->dirroot . '/local/metagroups/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class synchronize extends \core\task\adhoc_task {
-
     /**
      * Execute the synchronize task
      *

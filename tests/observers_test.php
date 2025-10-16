@@ -30,7 +30,6 @@ use local_metagroups\task\synchronize;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class observers_test extends advanced_testcase {
-
     /** @var stdClass $course1 */
     protected $course1;
 
@@ -150,8 +149,10 @@ final class observers_test extends advanced_testcase {
         // User should also be a member of group in linked course.
         $linkedgroupid = $DB->get_field('groups', 'id', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id]);
 
-        $exists = $DB->record_exists('groups_members',
-            ['groupid' => $linkedgroupid, 'userid' => $user->id, 'component' => 'local_metagroups', 'itemid' => $this->group->id]);
+        $exists = $DB->record_exists(
+            'groups_members',
+            ['groupid' => $linkedgroupid, 'userid' => $user->id, 'component' => 'local_metagroups', 'itemid' => $this->group->id],
+        );
         $this->assertTrue($exists);
     }
 
@@ -169,8 +170,10 @@ final class observers_test extends advanced_testcase {
         // User should no longer be a member of group in linked course.
         $linkedgroupid = $DB->get_field('groups', 'id', ['courseid' => $this->course2->id, 'idnumber' => $this->group->id]);
 
-        $exists = $DB->record_exists('groups_members',
-            ['groupid' => $linkedgroupid, 'userid' => $user->id, 'component' => 'local_metagroups', 'itemid' => $this->group->id]);
+        $exists = $DB->record_exists(
+            'groups_members',
+            ['groupid' => $linkedgroupid, 'userid' => $user->id, 'component' => 'local_metagroups', 'itemid' => $this->group->id],
+        );
         $this->assertFalse($exists);
     }
 }

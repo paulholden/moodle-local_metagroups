@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/local/metagroups/locallib.php');
 set_debugging(DEBUG_DEVELOPER, true);
 
 // Now get cli options.
-list($options, $unrecognized) = cli_get_params(
+[$options, $unrecognized] = cli_get_params(
     ['course' => null, 'verbose' => false, 'help' => false],
     ['c' => 'course', 'v' => 'verbose', 'h' => 'help']
 );
